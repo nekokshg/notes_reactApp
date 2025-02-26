@@ -6,7 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 
 //Middleware
 app.use(express.json());
@@ -43,7 +43,7 @@ const Note = mongoose.model('Note', notesSchema);
 
 //CRUD API ROUTES => CREATE, READ, UPDATE, DELETE
 //Get all notes
-app.get('api/notes', async (req,res) => {
+app.get('/api/notes', async (req,res) => {
     try {
         const notes = await Note.find();
         res.json(notes);
@@ -83,8 +83,7 @@ app.post('/api/notes', async (req,res) => {
 
         //Create a new mongoose document based on the Note model
         const newNote = new Note({
-            title: title,
-            content: content,
+            title, content
         });
 
         //Save the newNote in MongoDB
@@ -102,10 +101,10 @@ app.post('/api/notes', async (req,res) => {
 app.put('/api/notes/:id', async (req,res) => {
     try {
         //Get the id from the params
-        const { id } = res.params;
+        const { id } = req.params;
 
         //Get the edited title/content from the frontend
-        const { title: newTitle, content: newContent } = res.body;
+        const { title: newTitle, content: newContent } = req.body;
 
         //Error check if the title or content is missing from the frontend
         if (!newTitle || !newContent) return res.status(400).json({error: 'Title or content missing'});
